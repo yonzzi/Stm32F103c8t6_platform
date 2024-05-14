@@ -1,0 +1,10 @@
+00:54:51 **** Incremental Build of configuration Debug for project boot_uart ****
+make -j8 all 
+arm-none-eabi-size   boot_uart.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4500	     20	   1572	   6092	   17cc	boot_uart.elf
+Finished building: default.size.stdout
+ 
+
+00:54:52 Build Finished. 0 errors, 0 warnings. (took 548ms)
+

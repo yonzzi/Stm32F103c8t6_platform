@@ -1,0 +1,17 @@
+18:27:27 **** Build of configuration Debug for project UART ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "UART.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\Users\hoatt\STM32CubeIDE\workspace_1.9.0\UART\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UART.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: UART.elf
+ 
+arm-none-eabi-size   UART.elf 
+arm-none-eabi-objdump -h -S  UART.elf  > "UART.list"
+   text	   data	    bss	    dec	    hex	filename
+   3936	     20	   1604	   5560	   15b8	UART.elf
+Finished building: default.size.stdout
+ 
+Finished building: UART.list
+ 
+
+18:27:29 Build Finished. 0 errors, 0 warnings. (took 1s.297ms)
+

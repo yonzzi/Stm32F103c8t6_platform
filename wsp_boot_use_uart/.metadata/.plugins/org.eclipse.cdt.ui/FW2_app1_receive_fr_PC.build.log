@@ -1,0 +1,59 @@
+12:32:54 **** Incremental Build of configuration Debug for project FW2_app1_receive_fr_PC ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'dma1_uart1_rx_init':
+../Core/Src/main.c:131:14: warning: assignment to 'uint32_t' {aka 'long unsigned int'} from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+  131 |  *DMA1_CMAR5 = recv_data;
+      |              ^
+../Core/Src/main.c: At top level:
+../Core/Src/main.c:222:3: warning: "/*" within comment [-Wcomment]
+  222 |  //*FLASH_AR |=(1 << page);
+      |    
+../Core/Src/main.c:240:4: warning: "/*" within comment [-Wcomment]
+  240 |   //*FLASH_OPTKEYR = 0x00A5;// enable to set Option bytes write enable
+      |     
+../Core/Src/main.c:247:3: warning: "/*" within comment [-Wcomment]
+  247 |  //*FLASH_CR |= (1<<5)|(1<<9);// enable option bytes to write single byte. ( with default it write half word)
+      |    
+../Core/Src/main.c: In function 'Flash_erase_page':
+../Core/Src/main.c:277:12: warning: assignment to 'uint32_t' {aka 'long unsigned int'} from 'uint32_t *' {aka 'long unsigned int *'} makes integer from pointer without a cast [-Wint-conversion]
+  277 |  *FLASH_AR = (uint32_t *)(start_add);
+      |            ^
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:351:3: warning: implicit declaration of function 'sscanf' [-Wimplicit-function-declaration]
+  351 |   sscanf(recv_data,"size = %d",&fw_size);
+      |   ^~~~~~
+../Core/Src/main.c:351:3: warning: incompatible implicit declaration of built-in function 'sscanf'
+../Core/Src/main.c:57:1: note: include '<stdio.h>' or provide a declaration of 'sscanf'
+   56 | #include "string.h"
+  +++ |+#include <stdio.h>
+   57 | #define GPIOA_BASE_ADD 0x40010800
+../Core/Src/main.c:351:29: warning: format '%d' expects argument of type 'int *', but argument 3 has type 'uint16_t *' {aka 'short unsigned int *'} [-Wformat=]
+  351 |   sscanf(recv_data,"size = %d",&fw_size);
+      |                            ~^  ~~~~~~~~
+      |                             |  |
+      |                             |  uint16_t * {aka short unsigned int *}
+      |                             int *
+      |                            %hd
+../Core/Src/main.c:367:31: warning: pointer targets in passing argument 2 of 'Flash_programing' differ in signedness [-Wpointer-sign]
+  367 |   Flash_programing(0x8002800, recv_data, fw_size );//code tuan
+      |                               ^~~~~~~~~
+      |                               |
+      |                               char *
+../Core/Src/main.c:289:50: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
+  289 | void Flash_programing(uint32_t address, uint8_t *data, uint32_t num_byte_data){
+      |                                         ~~~~~~~~~^~~~
+arm-none-eabi-gcc -o "FW2_app1_receive_fr_PC.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\Users\hoatt\STM32CubeIDE\wsp_boot_use_uart\FW2_app1_receive_fr_PC\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="FW2_app1_receive_fr_PC.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: FW2_app1_receive_fr_PC.elf
+ 
+arm-none-eabi-size   FW2_app1_receive_fr_PC.elf 
+arm-none-eabi-objdump -h -S  FW2_app1_receive_fr_PC.elf  > "FW2_app1_receive_fr_PC.list"
+   text	   data	    bss	    dec	    hex	filename
+   9512	    136	  11832	  21480	   53e8	FW2_app1_receive_fr_PC.elf
+Finished building: default.size.stdout
+ 
+Finished building: FW2_app1_receive_fr_PC.list
+ 
+
+12:32:56 Build Finished. 0 errors, 9 warnings. (took 1s.820ms)
+

@@ -1,0 +1,10 @@
+23:25:06 **** Incremental Build of configuration Debug for project FW3_app2_update ****
+make -j8 all 
+arm-none-eabi-size   FW3_app2_update.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4596	     20	   1572	   6188	   182c	FW3_app2_update.elf
+Finished building: default.size.stdout
+ 
+
+23:25:07 Build Finished. 0 errors, 0 warnings. (took 1s.6ms)
+
