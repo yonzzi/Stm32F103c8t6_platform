@@ -1,0 +1,4 @@
+../Drivers/my_drive/Src/gpio.c:10:6:Cus_Config_GPIO	24	static
+../Drivers/my_drive/Src/gpio.c:55:6:Cus_Write_GPIO_Pin	16	static
+../Drivers/my_drive/Src/gpio.c:62:10:Cus_Read_GPIO_Pin	24	static
+../Drivers/my_drive/Src/gpio.c:76:6:Cus_Toggle_GPIO_Pin	16	static
