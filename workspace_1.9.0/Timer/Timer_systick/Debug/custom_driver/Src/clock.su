@@ -1,0 +1,4 @@
+../custom_driver/Src/clock.c:16:6:clock_init	24	static
+../custom_driver/Src/clock.c:52:6:clock_enable_APB1	24	static
+../custom_driver/Src/clock.c:58:6:clock_enable_APB2	24	static
+../custom_driver/Src/clock.c:64:6:clock_enable_AHB	24	static

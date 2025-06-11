@@ -1,0 +1,62 @@
+/*
+ * pwm.c
+ *
+ *  Created on: Jun 20, 2024
+ *      Author: hoatt
+ */
+
+/**
+ * @brief generate pwm with frequency =1Hz, pulse width=50%
+ * @pama None // parameter
+ * @reval None // return value
+ */
+#include "clock.h"
+#include <stdint.h>
+ void  pwm_init()
+ {
+	 //config for PB6 as TIM4
+    //__HAL_RCC_GPIOB_CLK_ENABLE();
+    clock_enable_APB2(GPIOBEN);
+    uint32_t *GPIOB_CRL = (uint32_t *)(0x40010c00);
+    *GPIOB_CRL &= ~(0b1111 << 24);
+    *GPIOB_CRL |= (0b1001 << 24); // alternate function push-pull
+
+    uint32_t* AFIO_MAPR = (uint32_t*)(0x40010000 + 0x04);
+	*AFIO_MAPR &=~(0x1<<12);
+	*AFIO_MAPR =(0<<12);		//map as time4 channel 1 for PB6
+
+    //__HAL_RCC_TIM4_CLK_ENABLE();
+    clock_enable_APB1(TIM4EN);
+    uint16_t *TIM4_PSC = (uint16_t *)(0x40000828); // pre scaler
+    uint16_t *TIM4_CCR1 = (uint16_t *)(0x40000834);// pwm value count
+    uint16_t *TIM4_ARR = (uint16_t *)(0x4000082c); // count max
+    uint16_t *TIM4_CR1 = (uint16_t *)(0x40000800);
+    uint16_t *TIM4_CCMR1_Output = (uint16_t *)(0x40000818); //capture compare mode output
+    uint16_t *TIM4_CCER = (uint16_t *)(0x40000820); // enable compare or capture
+
+
+    *TIM4_ARR = 100; //max count = 100
+    *TIM4_PSC = 8000-1; //set timer basic with cycle 100ms
+    *TIM4_CCR1 = 0; // 0% high
+    //if decrease max count and CCR1 value -> power will decrease, led fades
+
+    //select Channel 1 work at compare ( PWM mode 1) or capture
+    *TIM4_CCMR1_Output &= ~(0b11<<0); // set channel 1 in output compare
+    *TIM4_CCMR1_Output &= ~(0b111<<4); //clear bit select compare/capture
+    *TIM4_CCMR1_Output |= (0b110<<4); //set PWM mode 1 for compare channel 1 timer 4
+
+    //enable CH1( compare/capture)
+    *TIM4_CCER |=1<<0;
+
+    //enable counter
+    *TIM4_CR1 |=1<<0;
+ }
+ void pwm_pulse_ctrl(uint16_t pulse)
+ {
+	 if(pulse < 0 || pulse >100)
+		 return;
+
+	 uint16_t *TIM4_CCR1 = (uint16_t *)(0x40000834);
+	 *TIM4_CCR1 = pulse;
+
+ }

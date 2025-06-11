@@ -1,0 +1,59 @@
+/*
+ * adc.h
+ *
+ *  Created on: Apr 17, 2024
+ *      Author: ThanhDat
+ */
+
+#ifndef INC_ADC_H_
+#define INC_ADC_H_
+
+#include <stdint.h>
+#include "my_gpio.h"
+
+#define ADC1_BASE_ADD   (0x40012400U)
+#define ADC2_BASE_ADD   (0x40012800U)
+#define ADC3_BASE_ADD   (0x40013C00U)
+
+typedef struct {
+    uint32_t ADC_SR;
+    uint32_t ADC_CR1;
+    uint32_t ADC_CR2;
+    uint32_t ADC_SMPR1;
+    uint32_t ADC_SMPR2;
+    uint32_t ADC_JOFR1;
+    uint32_t ADC_JOFR2;
+    uint32_t ADC_JOFR3;
+    uint32_t ADC_JOFR4;
+    uint32_t ADC_HTR;
+    uint32_t ADC_LTR;
+    uint32_t ADC_SQR1;
+    uint32_t ADC_SQR2;
+    uint32_t ADC_SQR3;
+    uint32_t ADC_JSQR;
+    uint32_t ADC_JDR1;
+    uint32_t ADC_JDR2;
+    uint32_t ADC_JDR3;
+    uint32_t ADC_JDR4;
+    uint32_t ADC_DR;
+}ADC_X;
+
+typedef enum{
+	ADC_IN1 =1,
+	ADC_IN2,  ADC_IN3,   ADC_IN4,
+	ADC_IN5,  ADC_IN6,   ADC_IN7,
+	ADC_IN8,  ADC_IN9,   ADC_IN10,
+	ADC_IN11, ADC_IN12,  ADC_IN13,
+	ADC_IN14, ADC_IN15,  ADC_IN16
+}ADC_Channel;
+
+void MTD_ADC1_Init(ADC_Channel ADC_INx);
+float MTD_ADC1_get_temp_sensor();
+float MTD_ADC1_get_voltage();
+
+#define ADC1    ((ADC_X *)ADC1_BASE_ADD)
+#define ADC2    ((ADC_X *)ADC2_BASE_ADD)
+#define ADC3    ((ADC_X *)ADC3_BASE_ADD)
+
+
+#endif /* INC_ADC_H_ */

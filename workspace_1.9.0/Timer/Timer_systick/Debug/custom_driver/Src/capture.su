@@ -1,0 +1,3 @@
+../custom_driver/Src/capture.c:44:6:capture_init	48	static
+../custom_driver/Src/capture.c:82:10:capture_read_frequence	16	static
+../custom_driver/Src/capture.c:89:10:capture_read_pulse_width	16	static

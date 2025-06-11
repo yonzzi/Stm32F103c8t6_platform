@@ -139,6 +139,7 @@ SECTIONS
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
     *(.RamFunc)        /* .RamFunc sections */
+    *(.Func_in_Ram)
     *(.RamFunc*)       /* .RamFunc* sections */
 
     . = ALIGN(4);

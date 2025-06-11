@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;Timer_PWM&apos; to &apos;Timer_input_capture&apos;" description="Rename resource &apos;Timer_PWM&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/Timer_PWM" name="Timer_input_capture" stamp="1719153409522" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;Timer_systick&apos; to &apos;Timer_systick_PWM&apos;" description="Rename resource &apos;Timer_systick&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/Timer_systick" name="Timer_systick_PWM" stamp="1719153446514" updateReferences="true"/>
+</session>

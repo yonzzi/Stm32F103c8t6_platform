@@ -1,0 +1,14 @@
+/*
+ * adc1.h
+ *
+ *  Created on: Jul 21, 2024
+ *      Author: hoatt
+ */
+
+#ifndef INC_ADC1_H_
+#define INC_ADC1_H_
+
+void adc_init();
+float MTD_ADC1_get_temp_sensor();
+float MTD_ADC1_get_voltage();
+#endif /* INC_ADC1_H_ */

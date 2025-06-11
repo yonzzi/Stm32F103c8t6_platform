@@ -18,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "string.h"
+#include "stdarg.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -54,6 +56,7 @@ static void MX_GPIO_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 #include "string.h"
+#include "stdarg.h"
 #define GPIOA_BASE_ADD 0x40010800
 #define GPIOB_BASE_ADD 0x40010C00
 
@@ -148,14 +151,14 @@ void dma1_uart1_rx_init()
 	*DMA1_CMAR5 = recv_data;
 
 	*DMA1_CCR5 |= 1<<7 ; // set memory increment mode -- if do not set this buffer will be override data
-	*DMA1_CCR5 |= 1<<5 ; // enable circular mode
-	*DMA1_CCR5 |= 1<<1 ; // Transfer complete interrupt enable
+	//*DMA1_CCR5 |= 1<<5 ; // enable circular mode
+	//*DMA1_CCR5 |= 1<<1 ; // Transfer complete interrupt enable
 	 //enable dma after ( read reg(DMA1_CPAR5,DMA1_CMAR5,DMA1_CNDTR5,...) to detail about it)
 	*DMA1_CCR5 |= 1<<0 ; //enable channel
 
 	//NVIC accept interrupt event , Which is send from dma1 channel 5
-	 uint32_t* NVIC_ISER0 = (uint32_t*)(0xE000E100 + 0x00);
-	 *NVIC_ISER0 |=(1<<15); //enable interrupt for event in position 15 in vector table(dma1_channel 5)
+	// uint32_t* NVIC_ISER0 = (uint32_t*)(0xE000E100 + 0x00);
+	// *NVIC_ISER0 |=(1<<15); //enable interrupt for event in position 15 in vector table(dma1_channel 5)
 
 
 }
@@ -177,6 +180,16 @@ void UART1_send_string(char *msg)
       UART1_send_1byte(msg[i]);
       HAL_Delay(1);
    }
+}
+
+void uart_printf(char* format, ...)
+{
+   va_list aptr;
+   va_start(aptr, format);
+   char buffer[128]={0};
+	vsprintf(buffer,format,aptr);
+	UART1_send_string(buffer);
+	va_end(aptr);
 }
 char UART1_receive_1byte()
 {
@@ -231,6 +244,92 @@ void custom_DMA1_channel5_IRQHandler()
 
 
 }
+
+#define FLASH_BASE_ADD 0x40022000
+uint32_t *FLASH_SR = (uint32_t *) (FLASH_BASE_ADD + 0x0C);  //Flash status register
+uint32_t *FLASH_CR = (uint32_t *) (FLASH_BASE_ADD + 0x10);  //Flash status register
+uint32_t *FLASH_AR = (uint32_t *) (FLASH_BASE_ADD + 0x14);  //Flash address register
+uint32_t *FLASH_KEYR = (uint32_t *) (FLASH_BASE_ADD + 0x04);  //Flash address register
+
+__attribute__((section(".Func_in_Ram"))) void Flash_erase_page(uint32_t start_add){
+
+	if(((*FLASH_CR >> 7) & 1) == 1){
+		// unlocking sequence should be written to the FLASH_KEYR
+		*FLASH_KEYR = 0x45670123;
+		*FLASH_KEYR = 0xCDEF89AB;
+	}
+
+	// Check that no Flash memory operation is ongoing by checking the BSY bit in the FLASH_SR register
+	while( ((*FLASH_SR >> 0) & 1) == 1  );
+
+	//Set the PER bit in the FLASH_CR register: Page Erase chosen
+	*FLASH_CR |= 1<<1;
+
+	//Program the FLASH_AR register to select a page to erase
+	*FLASH_AR = (uint32_t *)(start_add);
+
+	//Set the STRT bit in the FLASH_CR register
+	*FLASH_CR |=(1<<6);
+
+	//Wait for the BSY bit to be reset
+	while( ((*FLASH_SR >> 0) & 1) == 1 );
+
+	//clear the PER bit in the FLASH_CR register: Page Erase chosen
+	*FLASH_CR &= ~(1<<1);
+}
+
+
+__attribute__((section(".Func_in_Ram"))) void Flash_programing(uint32_t address, uint8_t *data, uint32_t num_byte_data){
+	int x = num_byte_data/1024 + 1;
+	uint32_t add_erase;
+	for(int i=0; i< x; i++){
+		add_erase = (address + i*1024);
+		Flash_erase_page(add_erase);
+	}
+
+
+	if(((*FLASH_CR >> 7) & 1) == 1){
+		// unlocking sequence should be written to the FLASH_KEYR
+		*FLASH_KEYR = 0x45670123;
+		*FLASH_KEYR = 0xCDEF89AB;
+	}
+
+	// Check that no Flash memory operation is ongoing by checking the BSY bit in the FLASH_SR register
+	while( ((*FLASH_SR >> 0) & 1) == 1  );
+
+	//Set the PG bit in the FLASH_CR register: Flash programming chosen.
+	*FLASH_CR |= 1<<0;
+
+	//Perform the data write (half-word = 16 bit) at the desired address.
+	for(int i =0; i< num_byte_data; i+=2){
+		*(uint16_t*)(address) = (uint16_t)(data[i] + (data[i+1] << 8));
+		address += 2; // 16bits = 2 byte. dia chi tang dan 2byte
+	}
+
+	//Wait for the BSY bit to be reset
+	while( ((*FLASH_SR >> 0) & 1) == 1 );
+
+	//clear the PG bit in the FLASH_CR register
+	*FLASH_CR &= ~(1<<0);
+
+}
+__attribute__((section(".Func_in_Ram"))) void update_firmware()
+{
+	//disable system tick because this func always run ( always create interrupt every 1s to be able to use hal_delay -> if erease flash this will erease too)
+	uint32_t *STCSR = (uint32_t*)(0xE000E010); //system control in core arm doc
+	*STCSR &=~1;
+
+	//erease flash page 0
+
+	// program page 0 ( addr: 0x08000000) with data in new_fw_data ( in RAM)
+	Flash_programing(0x08000000, new_fw_data, sizeof(new_fw_data));
+
+	//reset system
+	   uint32_t *AIRCR = (uint32_t*)(0xE000ED0C);
+	   *AIRCR = (0x05fa << 16) | (1<<2); //set VECTKEYSTAT and SYSRESETREQ in core arm
+
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -263,10 +362,18 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
    uart1_init();
+   dma1_uart1_rx_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+uart_printf("pls send %d byte to stm32\r\n", sizeof(new_fw_data));
+for (int i=0;i<sizeof(new_fw_data);i++)
+{
+	new_fw_data[i]=UART1_receive_1byte();
+}
+uart_printf("start update device. Don't power off device\r\n");
+update_firmware();
   while (1)
   {
     /* USER CODE END WHILE */

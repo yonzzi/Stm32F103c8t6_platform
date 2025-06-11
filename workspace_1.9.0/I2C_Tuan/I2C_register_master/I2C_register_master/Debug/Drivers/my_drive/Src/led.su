@@ -1,0 +1,3 @@
+../Drivers/my_drive/Src/led.c:35:6:GPIO_init	16	static
+../Drivers/my_drive/Src/led.c:52:6:led_init	16	static
+../Drivers/my_drive/Src/led.c:62:6:led_control	16	static

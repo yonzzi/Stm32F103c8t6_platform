@@ -1,0 +1,9 @@
+../Core/Src/main.c:115:5:main	8	static
+../Core/Src/main.c:212:6:SystemClock_Config	72	static
+../Core/Src/main.c:249:13:MX_GPIO_Init	16	static
+../Core/Src/main.c:268:6:Func1	16	static
+../Core/Src/main.c:290:6:Func2	16	static
+../Core/Src/main.c:313:6:Func3	32	static
+../Core/Src/main.c:346:6:Func4	24	static
+../Core/Src/main.c:367:6:Func5	16	static
+../Core/Src/main.c:385:6:Error_Handler	4	static,ignoring_inline_asm

@@ -1,0 +1,5 @@
+{
+    "files.associations": {
+        "rtc_ds3231.h": "c"
+    }
+}

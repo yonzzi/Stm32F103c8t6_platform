@@ -1,0 +1,9 @@
+../Core/Src/main.c:44:6:spi_active_slave	16	static
+../Core/Src/main.c:52:6:spi_inactive_slave	16	static
+../Core/Src/main.c:59:6:spi_init	32	static
+../Core/Src/main.c:100:6:spi_read_data	32	static
+../Core/Src/main.c:144:6:spi_write_data	32	static
+../Core/Src/main.c:204:5:main	16	static
+../Core/Src/main.c:258:6:SystemClock_Config	72	static
+../Core/Src/main.c:295:13:MX_GPIO_Init	16	static
+../Core/Src/main.c:311:6:Error_Handler	4	static,ignoring_inline_asm

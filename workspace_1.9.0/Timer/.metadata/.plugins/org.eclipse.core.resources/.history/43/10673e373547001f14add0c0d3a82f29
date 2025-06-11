@@ -1,0 +1,101 @@
+/*
+ * main.c
+ *
+ *  Created on: Jun 19, 2024
+ *      Author: hoatt
+ */
+#include"stdint.h"
+//#include "main.h"
+#include "led.h"
+#include "delay.h"
+#include "adc1.h"
+//#include "pwm.h"
+//#include "capture.h"
+#include "low_power.h"
+
+//uint16_t t_pwm;
+//uint16_t t_pulse_width;
+void setup()
+{
+   led_init();
+   //led_control(1);
+   timer1_init();
+//   pwm_init();
+//   capture_init();
+//   pwm_pulse_ctrl(50); //PWM=50%
+   //clock_init();
+  // adc_init();
+   MTD_ADC1_Init(ADC_IN16);
+
+	//enable_iwdg();
+
+   //setup event hardfault
+//   uint32_t* CFSR = (uint32_t*)0xE000ED28;
+//   *CFSR |=1<<9; // this fault occurs
+
+}
+float temp_sensor;
+//int cnt=0;
+
+int x=0,y=0;
+int c=0;
+void loop()
+{
+	//for timer pwm with độ sáng tăng dần
+//   cnt++;
+//   if(cnt > 100)
+//   {
+//	   cnt=0;
+//   }
+   //pwm_pulse_ctrl(50);
+
+	/* for use timer capture
+	t_pwm=capture_read_frequence();
+	t_pulse_width=capture_read_pulse_width();
+ * */
+
+
+	temp_sensor= MTD_ADC1_get_temp_sensor();
+   led_control(1);
+   timer1_delay(500); //will count every 1000ms
+   led_control(0);
+   timer1_delay(500);
+
+
+	/* into and wakeup in low_energy
+	timer1_delay(5000);
+	enable_iwdg(); // set time to watchog reset after 4s
+	goto_low_power_mode();
+	*/
+
+
+	/* function second of low energy mode
+	led_control(1);
+   timer1_delay(500); //will count every 1000ms
+   led_control(0);
+   timer1_delay(500);
+	if(c++==5)
+	{
+		x=1/y;
+	}
+	feed_iwdg();
+	*/
+
+}
+
+int main()
+{
+	setup();
+	while (1)
+	{
+	  loop();
+	}
+	return 0;
+}
+
+//void HardFault_Handler()
+//{
+//	while(1);
+//}
+
+

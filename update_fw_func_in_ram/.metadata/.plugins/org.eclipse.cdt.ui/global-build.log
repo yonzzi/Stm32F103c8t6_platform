@@ -1,0 +1,35 @@
+09:12:21 **** Incremental Build of configuration Debug for project uart_ram ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'dma1_uart1_rx_init':
+../Core/Src/main.c:151:14: warning: assignment to 'uint32_t' {aka 'long unsigned int'} from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+  151 |  *DMA1_CMAR5 = recv_data;
+      |              ^
+../Core/Src/main.c: In function 'uart_printf':
+../Core/Src/main.c:190:2: warning: implicit declaration of function 'vsprintf' [-Wimplicit-function-declaration]
+  190 |  vsprintf(buffer,format,aptr);
+      |  ^~~~~~~~
+../Core/Src/main.c: In function 'Flash_erase_page':
+../Core/Src/main.c:269:12: warning: assignment to 'uint32_t' {aka 'long unsigned int'} from 'uint32_t *' {aka 'long unsigned int *'} makes integer from pointer without a cast [-Wint-conversion]
+  269 |  *FLASH_AR = (uint32_t *)(start_add);
+      |            ^
+../Core/Src/main.c: In function 'update_firmware':
+../Core/Src/main.c:321:31: warning: pointer targets in passing argument 2 of 'Flash_programing' differ in signedness [-Wpointer-sign]
+  321 |  Flash_programing(0x08000000, new_fw_data, sizeof(new_fw_data));
+      |                               ^~~~~~~~~~~
+      |                               |
+      |                               char *
+../Core/Src/main.c:282:91: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
+  282 | __attribute__((section(".Func_in_Ram"))) void Flash_programing(uint32_t address, uint8_t *data, uint32_t num_byte_data){
+      |                                                                                  ~~~~~~~~~^~~~
+arm-none-eabi-gcc -o "uart_ram.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\Users\hoatt\STM32CubeIDE\update_fw_func_in_ram\uart_ram\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="uart_ram.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: uart_ram.elf
+ 
+arm-none-eabi-size   uart_ram.elf 
+arm-none-eabi-objdump -h -S  uart_ram.elf  > "uart_ram.list"
+   text	   data	    bss	    dec	    hex	filename
+   8484	      8	   6328	  14820	   39e4	uart_ram.elf
+Finished building: default.size.stdout
+ 
+Finished building: uart_ram.list
+ 

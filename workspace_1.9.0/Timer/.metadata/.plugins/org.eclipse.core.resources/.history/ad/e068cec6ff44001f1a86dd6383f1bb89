@@ -1,0 +1,74 @@
+/*
+ * adc.c
+ *
+ *  Created on: Jul 18, 2024
+ *      Author: hoatt
+ */
+
+
+#include "adc.h"
+#include "clock.h"
+#include "stdint.h"
+
+#define ADC1_BASE_ADDRESS 0x40012400
+#define ADC1_IN16 16
+//need to check
+#define ADC1_IN1 1 // ADC external
+void adc_init()
+{
+	// need to check
+	//clock_enable_APB2(GPIOAEN);// turn on GPIOA for ADC external pin
+	//uint32_t* GPIOA_CRH = (uint32_t*)(GPIOA_BASE_ADD + 0x00);
+	//*GPIOA_CRH |= 0x11<<2; //set in anlog mode
+
+	//end
+
+    clock_enable_APB2(ADC1EN);
+    uint32_t *ADC_SR= (uint32_t*) ( ADC1_BASE_ADDRESS + 0x00); //status reg
+    uint32_t *ADC_CR1= (uint32_t*) ( ADC1_BASE_ADDRESS + 0x04); //control reg
+    uint32_t *ADC_CR2= (uint32_t*) ( ADC1_BASE_ADDRESS + 0x08);
+    uint32_t *ADC_JSQR= (uint32_t*) ( ADC1_BASE_ADDRESS + 0x38); //injected sequence register
+     uint32_t *ADC_SMPR1= (uint32_t*) ( ADC1_BASE_ADDRESS + 0x0C); // sample time reg
+
+    //*ADC_JSQR &=~(0x11<<20); // : Injected sequence length = 00: 1 conversion -set 1 conversion for measure temp
+     *ADC_JSQR |=(0x01<<20); // : Injected sequence length = 01: 2 conversion -set 2 conversion
+     *ADC_JSQR |= (ADC1_IN16 << 15); // select channel input ( temp) - set source for JSQ4 is IN16 ( temp sensor)
+     //*ADC_JSQR |= (ADC1_IN1 << 10); // select channel input ( temp) - set source for JSQ3 is IN1 ( external ADC)
+
+    *ADC_CR2 |= (1<<23); //enable temperature sensor
+
+    *ADC_SMPR1 |= 0x111 << 18; // set sample time for channel 16 (IN16) with 14 cycle =1us ( min)
+                              // so give max cycles for thoải mái :)
+
+    *ADC_CR2 |= (1<<0); //enable ADC
+
+
+}
+float adc_get_tem_sensor()
+{
+    float Vin=0;
+    float temp=0;
+    uint32_t raw_data=0; // value in data reg
+
+    uint32_t *ADC_SR= (uint32_t*) ( ADC1_BASE_ADDRESS + 0x00); //status reg
+    uint32_t *ADC_CR2= (uint32_t*) ( ADC1_BASE_ADDRESS + 0x08);
+    uint32_t *ADC_JDR1= (uint32_t*) ( ADC1_BASE_ADDRESS + 0x3C); // injected data reg
+
+    //trigger ADC start convert
+    *ADC_CR2 |=1<<21;
+
+    //wait until end off conversion
+    while (((*ADC_SR >> 2) & 1 ) == 0);
+    *ADC_SR &= ~(1<< 2); // clear JEOC flag
+
+    //read ADC data from JDR1 ( data of JSQ4)
+    raw_data = *ADC_JDR1;
+
+    Vin =(raw_data* 3300.0)/4095.0; // volt
+
+    temp=((1430 - Vin) / 4.3) + 25; // temperature= ((V25 - VSENSE) / Avg_Slope) + 25
+
+    return temp;
+
+
+}

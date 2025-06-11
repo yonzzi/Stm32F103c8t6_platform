@@ -1,0 +1,15 @@
+/*
+ * low_power.h
+ *
+ *  Created on: Jul 20, 2024
+ *      Author: hoatt
+ */
+
+#ifndef INC_LOW_POWER_H_
+#define INC_LOW_POWER_H_
+
+void goto_low_power_mode();
+void enable_iwdg();
+void feed_iwdg();
+
+#endif /* INC_LOW_POWER_H_ */

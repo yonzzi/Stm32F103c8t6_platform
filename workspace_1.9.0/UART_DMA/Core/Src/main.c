@@ -102,7 +102,7 @@ void uart1_init()
 //   +frame:
 //       + data len : 8 bit
 //      +parity : none
-   __HAL_RCC_USART1_CLK_ENABLE(); // RCC cấp clock cho uart : 16Mhz
+   __HAL_RCC_USART1_CLK_ENABLE(); // RCC cấp clock cho uart : 8Mhz
 
    uint32_t* USART1_BRR = (uint32_t*)(0x40013808);
    uint32_t* USART1_CR1 = (uint32_t*)(0x4001380c);
@@ -114,14 +114,14 @@ void uart1_init()
 
    *USART1_CR1 |=(1<<13)|(1<<2)|(1<<3); //enable tx,rx và uart tổng
 
-#if 0
+#if 0 // use interrupt
    //enable RXNE interr -> when RXNE is set , UART1 generate interr event send to NVIC
    *USART1_CR1 |=(1<<5);
 
    //NVIC accept interrupt event , Which is send from uart
    uint32_t* NVIC_ISER1 = (uint32_t*)(0xE000E100 + 0x04);
    *NVIC_ISER1 |=(1<<(37-32)); //enable interrupt for event in position 37 in vector table( UART1)
-#else
+#else // use DMA
    //when RXNE is set, send signal to DMA1, DMA1 move data to RAM
    uint32_t* USART1_CR3 = (uint32_t*)(0x40013814);
    *USART1_CR3 |= (1<<6);

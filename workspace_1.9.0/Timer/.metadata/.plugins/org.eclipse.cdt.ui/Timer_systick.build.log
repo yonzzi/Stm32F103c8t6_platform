@@ -1,0 +1,17 @@
+13:08:29 **** Incremental Build of configuration Debug for project Timer_systick ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/hoatt/STM32CubeIDE/workspace_1.9.0/Timer/Timer_systick/custom_driver/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Timer_systick.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\Users\hoatt\STM32CubeIDE\workspace_1.9.0\Timer\Timer_systick\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Timer_systick.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Timer_systick.elf
+ 
+arm-none-eabi-size   Timer_systick.elf 
+arm-none-eabi-objdump -h -S  Timer_systick.elf  > "Timer_systick.list"
+   text	   data	    bss	    dec	    hex	filename
+   1256	      8	   1576	   2840	    b18	Timer_systick.elf
+Finished building: default.size.stdout
+ 
+Finished building: Timer_systick.list
+ 
+
+13:08:31 Build Finished. 0 errors, 0 warnings. (took 1s.509ms)
+

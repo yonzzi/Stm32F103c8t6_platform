@@ -1,0 +1,55 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "make",
+            "args": [
+                "All",
+            ],
+            "dependsOn": "CLEAN",
+            "group":{
+                "kind": "build",
+                "isDefault": true
+            } 
+        },
+        {
+            "label": "flash",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "make",
+            "args": [
+                "Flash",
+            ],
+            "dependsOn": "CLEAN",
+            "group":{
+                "kind": "build",
+                "isDefault": true
+            } 
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "make",
+            "args": [
+                "Clean",
+            ],
+            "dependsOn": "CLEAN",
+            "group":{
+                "kind": "build",
+                "isDefault": true
+            } 
+        }
+    ]
+}

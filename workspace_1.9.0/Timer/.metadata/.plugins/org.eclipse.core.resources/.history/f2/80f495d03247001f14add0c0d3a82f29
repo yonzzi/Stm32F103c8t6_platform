@@ -1,0 +1,93 @@
+/*
+ * adc1.c
+ *
+ *  Created on: Jul 21, 2024
+ *      Author: hoatt
+ */
+
+/*
+ * adc.c
+ *
+ *  Created on: Apr 17, 2024
+ *      Author: ThanhDat
+ */
+
+#include "rcc.h"
+#include "adc.h"
+#include "my_gpio.h"
+
+/*
+ * ADC application to read the temperature value of the temperature sensor of the CHIP device
+ * The temperature sensor is connected to the ADCx_IN16 input channel
+ */
+
+/*
+ * this function config ADC1 to read Temperature of Temperature data in device
+ */
+void MTD_ADC1_Init(ADC_Channel ADC_INx){
+	// ADC1_IN2 PA2
+	MTD_Clock_Enable_APB2(GPIOA_EN);
+	MTD_Config_GPIO(GPIOA, PIN_2, INPUT_ANALOG);
+
+    MTD_Clock_Enable_APB2(ADC1_EN);
+
+
+    (ADC1->ADC_JSQR) |= (0b01 << 20); 		// Injected used JSQ3[4:0] , JSQ4[4:0]
+
+    // JSQ4
+    (ADC1->ADC_SMPR1)  |= ( 0b111 << 18);	// set cycles max
+    (ADC1->ADC_JSQR) |= (ADC_INx << 15); 	// set conversion source is sensor temp ( channel IN16)
+
+    // JSQ3
+    (ADC1->ADC_SMPR2)  |= ( 0b111 << 6);	// set cycles max
+    (ADC1->ADC_JSQR)   |= (2 << 10); 	       // set conversion source use channel IN9
+
+    (ADC1->ADC_CR2)  |= ( 1 << 23); 		// Temperature sensor and VREFINT enable
+    (ADC1->ADC_CR2)  |= ( 1 << 0);			// Enable ADC and to start conversion
+}
+float MTD_ADC1_get_temp_sensor()
+{
+	float temp = 0;
+	float Vin = 0;  // Vsense
+	uint16_t raw_data =0;
+	uint32_t *sr= (uint32_t*)(0x40012400);
+	uint32_t *cr2= (uint32_t*)(0x40012408);
+	uint32_t *jdr1= (uint32_t*)(0x4001243c);
+
+	*cr2  |= (1 << 15); //1: Conversion on external event enable
+	*cr2  |= (0b111 << 12);// 111: JSWSTART
+	*cr2  |= (1 << 21);   //1: Starts conversion of injected channels
+
+	while(((*sr >> 2) & 1 ) == 0  );//Injected channel end of conversion
+	*sr &= ~(1<<2); // clear JEOC flag
+	*cr2  &= ~(1 << 15); // Conversion on external event disable
+
+
+	//Read the resulting VSENSE data in the JDR1 register (send from JSQ4)
+	raw_data = *jdr1 & 0xfff;
+	Vin = (raw_data * 3300.0)/4095.0; // 3000mV
+	temp = (((1340- Vin) / 4.6) + 25);
+
+	return temp;
+}
+
+float MTD_ADC1_get_voltage()
+{
+	float Vin = 0;  // Vsense
+	uint16_t raw_data =0;
+
+	(ADC1->ADC_CR2)  |= (1 << 15); //1: Conversion on external event enable
+	(ADC1->ADC_CR2)   |= (0b111 << 12);// 111: JSWSTART
+	(ADC1->ADC_CR2)   |= (1 << 21);   //1: Starts conversion of injected channels
+
+	while((( (ADC1->ADC_SR) >> 2) & 1 ) == 0  );//Injected channel end of conversion
+	(ADC1->ADC_SR) &= ~(1<<2); // clear JEOC flag
+	(ADC1->ADC_CR2)  &= ~(1 << 15); // Conversion on external event disable
+
+
+	//Read the resulting VSENSE data in the JDR2 register (send from JSQ3)
+	raw_data = (ADC1->ADC_JDR1);
+	Vin = (raw_data * 3.3)/4095.0; // 3000mV
+
+	return Vin;
+}

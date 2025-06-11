@@ -1,0 +1,15 @@
+/*
+ * delay.h
+ *
+ *  Created on: Jul 21, 2024
+ *      Author: hoatt
+ */
+
+#ifndef MY_DRIVER_INC_DELAY_H_
+#define MY_DRIVER_INC_DELAY_H_
+
+#include"stdint.h"
+void timer1_init();
+void timer1_delay(uint32_t msec);
+
+#endif /* MY_DRIVER_INC_DELAY_H_ */

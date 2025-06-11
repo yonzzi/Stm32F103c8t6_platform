@@ -48,6 +48,7 @@ void led_init()
 	__HAL_RCC_GPIOB_CLK_ENABLE(); //hal : tÃªn hÃ£ng, RCC: bá»™ táº¡o clock
 	//initial to set PB2 in output push-pull
 	uint32_t* GPIOB_CRH = (uint32_t*)(GPIOB_BASE_ADD + 0x00);// add base + add offset
+	*GPIOB_CRH &= ~(0xffffff);
 	*GPIOB_CRH |=(0b01<<8); //set PB2 in output config ( Mode[1,0] >00-> output; =00-> input) // <<22 lÃ  vá»‹ trÃ­ nha, do mÃ¬nh Ä‘á»ƒ cÃ³ 0bxx nÃªn nÃ³ Ä‘ang khÃ´ng lÃ  32 bit, pháº£i dá»‹ch nÃ³ Ä‘á»ƒ Ä‘Ãºng vá»‹ trÃ­
 	*GPIOB_CRH &=~(0b11<<10); // set PB2  in push-pull mode (00)
 
